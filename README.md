@@ -1,5 +1,5 @@
 # Raspberry Juke
-Raspberry Juke lets your Raspberry Pi to play sound or music easily on Raspberry Pi.
+Raspberry Juke lets your Raspberry Pi to play sound or music easily.
 
 
 
