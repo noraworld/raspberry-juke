@@ -1,5 +1,5 @@
 # Raspberry Juke
-WIP
+Raspberry Juke lets your Raspberry Pi to play sound or music easily on Raspberry Pi.
 
 
 
@@ -13,7 +13,7 @@ juke play /path/to/sound-or-music-file
 You can also play multiple sound or music simultaneously.
 
 ```shell
-juke play /path/to/sound-or-music-file /path/to/another-sound-or-music-file$
+juke play /path/to/sound-or-music-file /path/to/another-sound-or-music-file
 ```
 
 Stop sound or music.
