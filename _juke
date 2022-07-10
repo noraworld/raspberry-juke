@@ -1,0 +1,27 @@
+#compdef juke
+
+_juke() {
+  SOUND_DIRECTORY_PATH="$(dirname $(realpath $0))/pibox"
+
+  local -a cmds
+  cmds=(
+    "play[Play sounds]"
+    "stop[Stop sounds]"
+  )
+
+  local -a filenames
+  filenames=(${(uf)"$(find $SOUND_DIRECTORY_PATH -type f)"})
+
+  _arguments '1: :->cmd' '*: :->filename'
+
+  case "$state" in
+    cmd)
+      _values $state $cmds
+      ;;
+    filename)
+      _values $state $filenames
+      ;;
+  esac
+}
+
+compdef _juke juke
