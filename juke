@@ -26,7 +26,13 @@ play_sound() {
 
 
 stop_sound() {
-  for i; do
+  if [ "$1" = "all" ]; then
+    stop_filename="$(sort "$NOW_PLAYING_FILENAME" | uniq | xargs echo)"
+  else
+    stop_filename="$@"
+  fi
+
+  for i in $stop_filename; do
     if [ "$(grep "play $i" <(ps aux) | grep -v grep)" ]; then
       grep "play $i" <(ps aux) | grep -v grep | awk '{ print $2 }' | xargs kill -2
       sed -i "s!$i!!g" "$NOW_PLAYING_FILENAME"
