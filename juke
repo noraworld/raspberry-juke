@@ -48,6 +48,12 @@ sync_file() {
 }
 
 
+setup() {
+  [ -e .pibox ] || touch .pibox
+  [ -e pibox ] || mkdir pibox
+}
+
+
 main() {
   if [ "$#" -eq 0 ]; then
     echo "Error: Wrong number of argument (at least 1)" >&2
@@ -57,6 +63,7 @@ main() {
   cmd=$1
   shift
 
+  setup
   sync_file
 
   case $cmd in
