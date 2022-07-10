@@ -1,33 +1,77 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ "$#" -ne 1 ]; then
-  echo "The number of the argument is invalid." >&2
-  exit 1
-fi
+# Raspberry **Pi** Juke**box**
+NOW_PLAYING_FILENAME=".pibox"
 
-if [ "$(ps aux | grep "play /home/ubuntu/sleep/" | grep -v grep)" ]; then
-  ps aux | grep "play /home/ubuntu/sleep/" | grep -v grep | awk '{ print $2 }' | xargs kill -2
-fi
 
-if [ "$1" = "stop" ]; then
-  exit 0
-fi
+play_sound() {
+  # On iOS Shortcuts (Run script over SSH), The following command does
+  # not end until the sound source ends even though running in the background
+  #
+  #   play -q ~/sleep.mp3 &
+  #
+  # I don't know why it does not go well, and also don't know the
+  # following goes well
+  #
+  #   play ~/sleep.mp3 > /dev/null 2>&1 &
+  #
+  # cf. https://askubuntu.com/questions/176038/how-can-i-play-a-song-in-the-background-via-my-command-line#answer-1025636
+  #
+  for i; do
+    play "$i" > /dev/null 2>&1 &
+    echo "$i" >> "$NOW_PLAYING_FILENAME"
+  done
+}
 
-if ! [ -e "$1" ]; then
-  echo "No such file or directory" >&2
-  exit 1
-fi
 
-# On iOS Shortcuts (Run script over SSH), The following command does
-# not end until the sound source ends even though running in the background
-#
-#   play -q ~/sleep.mp3 &
-#
-# I don't know why it does not go well, and also don't know the
-# following goes well
-#
-#   play ~/sleep.mp3 > /dev/null 2>&1 &
-#
-# cf. https://askubuntu.com/questions/176038/how-can-i-play-a-song-in-the-background-via-my-command-line#answer-1025636
-#
-play "$1" > /dev/null 2>&1 &
+stop_sound() {
+  for i; do
+    if [ "$(grep "play $i" <(ps aux) | grep -v grep)" ]; then
+      grep "play $i" <(ps aux) | grep -v grep | awk '{ print $2 }' | xargs kill -2
+      sed -i "s!$i!!g" "$NOW_PLAYING_FILENAME"
+      sed -i '/^\s*$/d' "$NOW_PLAYING_FILENAME"
+    else
+      echo "Error: $i: No such music played" >&2
+    fi
+  done
+}
+
+
+sync_file() {
+  while read filename
+  do
+    if ! [ "$(grep "play $filename" <(ps aux) | grep -v grep)" ]; then
+      sed -i "s!$filename!!g" "$NOW_PLAYING_FILENAME"
+      sed -i '/^\s*$/d' "$NOW_PLAYING_FILENAME"
+    fi
+  done < "$NOW_PLAYING_FILENAME"
+}
+
+
+main() {
+  if [ "$#" -eq 0 ]; then
+    echo "Error: Wrong number of argument (at least 1)" >&2
+    exit 1
+  fi
+
+  cmd=$1
+  shift
+
+  sync_file
+
+  case $cmd in
+    "play")
+      play_sound "$@"
+      ;;
+    "stop")
+      stop_sound "$@"
+      ;;
+    *)
+      echo "Error: Invalid command (argument 1)" >&2
+      exit 1
+      ;;
+  esac
+}
+
+
+main "$@"
