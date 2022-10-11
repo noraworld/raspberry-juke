@@ -3,6 +3,16 @@ Raspberry Juke lets your Raspberry Pi to play sound or music easily.
 
 
 
+# Setup
+Put some sound or music under the `$HOME/.pibox/` directory.
+
+```shell
+mkdir $HOME/.pibox
+mv /path/to/sound-or-music-file $HOME/.pibox
+```
+
+
+
 ## Usage
 Play sound or music.
 
