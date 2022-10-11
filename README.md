@@ -1,5 +1,5 @@
 # Raspberry Juke
-Raspberry Juke lets your Raspberry Pi to play sound or music easily.
+Raspberry Juke lets your Raspberry Pi to play sound or music easily. Even though it's called Raspberry Pi, it's actually executable on any Linux device.
 
 
 
