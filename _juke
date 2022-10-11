@@ -1,7 +1,7 @@
 #compdef juke
 
 _juke() {
-  SOUND_DIRECTORY_PATH="$(dirname $(realpath $0))/pibox"
+  SOUND_DIRECTORY_PATH="$HOME/.pibox"
 
   local -a cmds
   cmds=(
