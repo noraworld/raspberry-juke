@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Raspberry **Pi** Juke**box**
-NOW_PLAYING_FILENAME=".pibox"
-SOUND_DIRECTORY="pibox"
+NOW_PLAYING_FILEPATH="$HOME/.pibox_np"
+SOUND_DIRECTORY="$HOME/.pibox"
 
 
 play_sound() {
@@ -20,14 +20,14 @@ play_sound() {
   #
   for i; do
     play "$i" > /dev/null 2>&1 &
-    echo "$i" >> "$NOW_PLAYING_FILENAME"
+    echo "$i" >> "$NOW_PLAYING_FILEPATH"
   done
 }
 
 
 stop_sound() {
   if [ "$1" = "all" ]; then
-    stop_filename="$(sort "$NOW_PLAYING_FILENAME" | uniq | xargs echo)"
+    stop_filename="$(sort "$NOW_PLAYING_FILEPATH" | uniq | xargs echo)"
   else
     stop_filename="$@"
   fi
@@ -35,8 +35,8 @@ stop_sound() {
   for i in $stop_filename; do
     if [ "$(grep "play $i" <(ps aux) | grep -v grep)" ]; then
       grep "play $i" <(ps aux) | grep -v grep | awk '{ print $2 }' | xargs kill -2
-      sed -i "s!$i!!g" "$NOW_PLAYING_FILENAME"
-      sed -i '/^\s*$/d' "$NOW_PLAYING_FILENAME"
+      sed -i "s!$i!!g" "$NOW_PLAYING_FILEPATH"
+      sed -i '/^\s*$/d' "$NOW_PLAYING_FILEPATH"
     else
       echo "Error: $i: No such music played" >&2
     fi
@@ -48,15 +48,15 @@ sync_file() {
   while read filename
   do
     if ! [ "$(grep "play $filename" <(ps aux) | grep -v grep)" ]; then
-      sed -i "s!$filename!!g" "$NOW_PLAYING_FILENAME"
-      sed -i '/^\s*$/d' "$NOW_PLAYING_FILENAME"
+      sed -i "s!$filename!!g" "$NOW_PLAYING_FILEPATH"
+      sed -i '/^\s*$/d' "$NOW_PLAYING_FILEPATH"
     fi
-  done < "$NOW_PLAYING_FILENAME"
+  done < "$NOW_PLAYING_FILEPATH"
 }
 
 
 setup() {
-  [ -e "$NOW_PLAYING_FILENAME" ] || touch "$NOW_PLAYING_FILENAME"
+  [ -e "$NOW_PLAYING_FILEPATH" ] || touch "$NOW_PLAYING_FILEPATH"
   [ -e "$SOUND_DIRECTORY" ] || mkdir "$SOUND_DIRECTORY"
 }
 
