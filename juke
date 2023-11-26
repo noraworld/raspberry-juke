@@ -4,7 +4,6 @@
 NOW_PLAYING_FILEPATH="$HOME/.pibox_np"
 SOUND_DIRECTORY="$HOME/.pibox"
 
-
 play_sound() {
   # On iOS Shortcuts (Run script over SSH), The following command does
   # not end until the sound source ends even though running in the background
@@ -24,7 +23,6 @@ play_sound() {
   done
 }
 
-
 stop_sound() {
   if [ "$1" = "all" ]; then
     stop_filename="$(sort "$NOW_PLAYING_FILEPATH" | uniq | xargs echo)"
@@ -43,7 +41,6 @@ stop_sound() {
   done
 }
 
-
 sync_file() {
   while read filename
   do
@@ -54,12 +51,10 @@ sync_file() {
   done < "$NOW_PLAYING_FILEPATH"
 }
 
-
 setup() {
   [ -e "$NOW_PLAYING_FILEPATH" ] || touch "$NOW_PLAYING_FILEPATH"
   [ -e "$SOUND_DIRECTORY" ] || mkdir "$SOUND_DIRECTORY"
 }
-
 
 main() {
   setup
@@ -87,6 +82,5 @@ main() {
       ;;
   esac
 }
-
 
 main "$@"
