@@ -38,7 +38,7 @@ stop_sound() {
   for i in $stop_filename; do
     if [ "$(grep -e "play" -e "$i" -e "juke" <(ps aux) | grep -v "grep" | grep -v "juke stop")" ]; then
       grep -e "play" -e "$i" -e "juke" <(ps aux) | grep -v "grep" | grep -v "juke stop" | awk '{ print $2 }' | xargs kill -9
-      sed -i "s!$i!!g" "$NOW_PLAYING_FILEPATH"
+      sed -i "s|$i||g" "$NOW_PLAYING_FILEPATH"
       sed -i '/^\s*$/d' "$NOW_PLAYING_FILEPATH"
     else
       echo "Error: $i: No such music played" >&2
@@ -50,7 +50,7 @@ sync_file() {
   while read filename
   do
     if ! [ "$(grep -e "play" -e "$filename" <(ps aux) | grep -v grep)" ]; then
-      sed -i "s!$filename!!g" "$NOW_PLAYING_FILEPATH"
+      sed -i "s|$filename||g" "$NOW_PLAYING_FILEPATH"
       sed -i '/^\s*$/d' "$NOW_PLAYING_FILEPATH"
     fi
   done < "$NOW_PLAYING_FILEPATH"
