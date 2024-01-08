@@ -20,8 +20,15 @@ play_sound() {
 
   for h in $(seq 1 "$TIMES"); do
     for i; do
-      play --volume "$VOLUME" "$i"
       echo "$i" >> "$NOW_PLAYING_FILEPATH"
+      play --volume "$VOLUME" "$i"
+      # If the play command above fails for some reason, tons of processes are created uninterruptedly, which are turned into zombie processes.
+      #
+      # NOTE: Do not write anything between the play command above and the if statement that checks whether the play command succeeded or not, except for comments like me.
+      #
+      # TODO: Output the error message when the play command above fails.
+      #       All the messages within this function are ignored because the play command shows unnecessary messages, even if it doesn't fail.
+      [ "$?" -ne 0 ] && exit 1
       VOLUME=$(echo "$VOLUME" + "$GRADUAL" | bc)
       [ "$(echo "$VOLUME >= $MAX" | bc)" = 1 ] && VOLUME="$MAX"
     done
